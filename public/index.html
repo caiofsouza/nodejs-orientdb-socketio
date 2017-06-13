@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script> 
+
+      HTMLElement.prototype.remove = function(){
+          var el = this;
+          el.parentNode.removeChild(el);
+      }
+
+      let socket = io()
+
+      socket.on('allUsers', (data) => {
+        addUser(data)
+      })
+
+      socket.on('userIn', (data) => {
+        addUser(data)
+      })
+
+      socket.on('removeUser', (id) => {
+        removeUser(id)
+      })
+
+      let removeUser = (id) => {
+        let rid = id.toString().replace(/\#|\:/gi, '')
+        let item = document.querySelector('[data-rid="'+rid+'"]')
+        item.style.opacity = 0
+        setTimeout(function(){
+          item.parentNode.removeChild(item)
+        }, 800)
+      }
+
+      let addUser = (arrUsers) => {
+        let list = document.querySelector('.users-list')
+        if (arrUsers.length > 0 ){
+
+          arrUsers.forEach((u) => {
+            let item = document.createElement('li')
+
+            item.dataset.rid = u['@rid'].toString().replace(/\#|\:/gi, '')
+            item.style.opacity = 0
+            item.style.width = 0
+
+            let text = 'Name: ' + u.name + '<br>'
+            text += 'Age: ' + u.age + '<br>'
+            text += 'Position: ' + u.position + '<br>'
+
+            item.innerHTML = text  
+
+            list.insertBefore(item, list.childNodes[0])
+            setTimeout(function() {
+              item.style.opacity = 1
+              item.style.width = '250px'
+            })
+          })
+
+        } else {
+          list.innerHTML = ''
+        }
+      }
+
+    </script>
+    <style>
+      .users-list li {
+        margin-bottom: 20px;
+        border: 1px solid #cccccc;
+        list-style: none;
+        padding: 15px;
+        box-shadow:1px 1px 1px 1px #eeeeee;
+        transition: width 0.5s, opacity 1.3s ease-out;
+
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Users Lists</h3>
+    <ul class="users-list">
+        
+    </ul>
+  </body>
+</html>
