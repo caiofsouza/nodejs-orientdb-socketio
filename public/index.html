@@ -5,11 +5,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script> 
 
-      HTMLElement.prototype.remove = function(){
-          var el = this;
-          el.parentNode.removeChild(el);
-      }
-
+      // init socket.io
       let socket = io()
 
       socket.on('allUsers', (data) => {
@@ -24,15 +20,26 @@
         removeUser(id)
       })
 
+      /**
+       * Remove a user from list
+       * @param  {String} id : the user id
+       * @return {void}
+       */
       let removeUser = (id) => {
         let rid = id.toString().replace(/\#|\:/gi, '')
         let item = document.querySelector('[data-rid="'+rid+'"]')
         item.style.opacity = 0
+        // set .8s to remove after change opacity
         setTimeout(function(){
           item.parentNode.removeChild(item)
         }, 800)
       }
 
+      /**
+       * Add one or more users to the list
+       * @param  {[type]} arrUsers : The array that contains the users infos 
+       * @return {void}          
+       */
       let addUser = (arrUsers) => {
         let list = document.querySelector('.users-list')
         if (arrUsers.length > 0 ){
@@ -40,6 +47,7 @@
           arrUsers.forEach((u) => {
             let item = document.createElement('li')
 
+            // format rid 
             item.dataset.rid = u['@rid'].toString().replace(/\#|\:/gi, '')
             item.style.opacity = 0
             item.style.width = 0
@@ -47,10 +55,13 @@
             let text = 'Name: ' + u.name + '<br>'
             text += 'Age: ' + u.age + '<br>'
             text += 'Position: ' + u.position + '<br>'
+            text += 'Group: ' + u.user_group + '<br>'
 
             item.innerHTML = text  
 
             list.insertBefore(item, list.childNodes[0])
+
+            // insert after .5s 
             setTimeout(function() {
               item.style.opacity = 1
               item.style.width = '250px'

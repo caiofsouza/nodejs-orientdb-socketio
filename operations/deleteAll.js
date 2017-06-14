@@ -1,3 +1,6 @@
+/**
+ * Delete all records on database
+ */
 const orientDB = require('orientjs')
 const db_config = require('./config/database')
 const server = orientDB(db_config)
